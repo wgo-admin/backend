@@ -35,3 +35,29 @@ GO_LDFLAGS += \
   -X $(VERSION_PACKAGE).BuildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ') \
   -X $(VERSION_PACKAGE).GitCommit=$(GIT_COMMIT) \
   -X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE)
+
+# 编译的操作系统可以是 linux/windows/darwin
+PLATFORMS ?= darwin_amd64 windows_amd64 linux_amd64 linux_arm64
+
+# 设置一个指定的操作系统
+ifeq ($(origin PLATFORM), undefined)
+	ifeq ($(origin GOOS), undefined)
+		GOOS := $(shell go env GOOS)
+	endif
+	ifeq ($(origin GOARCH), undefined)
+		GOARCH := $(shell go env GOARCH)
+	endif
+	PLATFORM := $(GOOS)_$(GOARCH)
+else
+	GOOS := $(word 1, $(subst _, ,$(PLATFORM)))
+	GOARCH := $(word 2, $(subst _, ,$(PLATFORM)))
+endif
+
+# Makefile 设置
+ifndef V
+MAKEFLAGS += --no-print-directory
+endif
+
+# Linux 命令设置
+FIND := find . ! -path './third_party/*' ! -path './vendor/*'
+XARGS := xargs --no-run-if-empty
