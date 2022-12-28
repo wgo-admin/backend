@@ -13,7 +13,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/wgo-admin/backend/internal/pkg/known"
 	"github.com/wgo-admin/backend/internal/pkg/log"
+	"github.com/wgo-admin/backend/pkg/token"
 	"github.com/wgo-admin/backend/pkg/version/verflag"
 )
 
@@ -71,6 +73,9 @@ func run() error {
 	if err := initStore(); err != nil {
 		return err
 	}
+
+	// 设置 token 包的签发密钥，用于 token 包的 token 签发和解析
+	token.Init(viper.GetString("jwt-secret"), known.XUsernameKey, known.XRoleKey)
 
 	// 设置 gin 模式
 	gin.SetMode(viper.GetString("runmode"))

@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.2
+	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/gosuri/uitable v0.0.4
 	github.com/jasonsoft/go-short-id v0.0.0-20180410073244-6ed30cc4305d
 	github.com/spf13/cobra v1.6.1
