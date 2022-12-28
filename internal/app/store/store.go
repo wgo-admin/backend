@@ -3,6 +3,7 @@ package store
 import (
 	"sync"
 
+	"github.com/wgo-admin/backend/internal/app/store/model"
 	"gorm.io/gorm"
 )
 
@@ -30,5 +31,5 @@ func (ds *datastore) DB() *gorm.DB {
 }
 
 func (ds *datastore) AutoMigrate() error {
-	return ds.db.AutoMigrate()
+	return ds.db.AutoMigrate(model.RoleM{}, model.UserM{})
 }
