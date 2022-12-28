@@ -28,3 +28,7 @@ type datastore struct {
 func (ds *datastore) DB() *gorm.DB {
 	return ds.db
 }
+
+func (ds *datastore) AutoMigrate() error {
+	return ds.db.AutoMigrate()
+}

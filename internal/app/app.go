@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/wgo-admin/backend/internal/pkg/log"
+	"github.com/wgo-admin/backend/pkg/version/verflag"
 )
 
 var cfgFile string
@@ -31,6 +32,9 @@ func NewAppCommand() *cobra.Command {
 		SilenceUsage: true,
 		// 指定调用 cmd.Execute() 时，执行的 Run 函数，函数执行失败会返回错误信息
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// 如果 `--version=true`，则打印版本并退出
+			verflag.PrintAndExitIfRequested()
+
 			// 初始化日志
 			log.Init(logConfig())
 			// Sync 将缓存中的日志刷新到磁盘文件中
@@ -55,6 +59,9 @@ func NewAppCommand() *cobra.Command {
 
 	// Cobra 支持持久性标志(PersistentFlag)，该标志可用于它所分配的命令以及该命令下的每个子命令
 	cmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "应用程序项目配置文件")
+
+	// 添加 --version 标志
+	verflag.AddFlags(cmd.PersistentFlags())
 
 	return cmd
 }
@@ -92,6 +99,7 @@ func run() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
+	// 退出 http 服务器
 	if err := httpsrv.Shutdown(ctx); err != nil {
 		log.Errorw("Insecure Server forced to shutdown", "err", err)
 		return err
