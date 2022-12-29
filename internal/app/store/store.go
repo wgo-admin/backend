@@ -31,5 +31,5 @@ func (ds *datastore) DB() *gorm.DB {
 }
 
 func (ds *datastore) AutoMigrate() error {
-	return ds.db.AutoMigrate(model.RoleM{}, model.UserM{})
+	return ds.db.AutoMigrate(model.RoleM{}, model.UserM{}, model.MenuM{}, model.SysApiM{})
 }
