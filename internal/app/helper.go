@@ -83,13 +83,30 @@ func initStore() error {
 		LogLevel:              viper.GetInt("db.log-level"),
 	}
 
-	db, err := db.NewMySQL(dbOptions)
+	redisOptions := &db.RedisOptions{
+		Addr:     viper.GetString("redis.addr"),
+		Password: viper.GetString("redis.password"),
+		DB:       viper.GetInt("redis.db"),
+	}
+
+	// 初始化 gorm mysql
+	mysql, err := db.NewMySQL(dbOptions)
 	if err != nil {
 		return err
 	}
 
+	log.Infow("connect mysql success!")
+
+	// 初始化 redis
+	redis, err := db.NewRedis(redisOptions)
+	if err != nil {
+		return err
+	}
+
+	log.Infow("connect redis success!")
+
 	// 初始化存储层
-	ds := store.NewStore(db)
+	ds := store.NewStore(mysql, redis)
 
 	// 迁移 gorm 模型到数据库
 	if err := ds.AutoMigrate(); err != nil {

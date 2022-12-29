@@ -1,6 +1,7 @@
 package store
 
 import (
+	"github.com/go-redis/redis/v8"
 	"sync"
 
 	"github.com/wgo-admin/backend/internal/app/store/model"
@@ -13,16 +14,17 @@ var (
 	S *datastore
 )
 
-func NewStore(db *gorm.DB) *datastore {
+func NewStore(db *gorm.DB, rdb *redis.Client) *datastore {
 	// 确保只执行一次
 	once.Do(func() {
-		S = &datastore{db: db}
+		S = &datastore{db: db, rdb: rdb}
 	})
 	return S
 }
 
 type datastore struct {
-	db *gorm.DB
+	db  *gorm.DB
+	rdb *redis.Client
 }
 
 // 返回一个 gorm db 对象

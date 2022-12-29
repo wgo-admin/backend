@@ -24,6 +24,12 @@ db:
   max-connection-life-time: 10s # 空闲连接最大存活时间，默认 10s
   log-level: 4 # GORM log level, 1: silent, 2:error, 3:warn, 4:info
 
+# Redis 配置
+redis:
+  addr: 127.0.0.1:6379
+  password: 123456
+  db: 0
+
 # 日志配置
 log:
   disable-caller: false # 是否开启 caller，如果开启会在日志中显示调用日志所在的文件和行号
