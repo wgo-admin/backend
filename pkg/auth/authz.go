@@ -16,17 +16,20 @@ import (
 
 const (
 	// casbin 访问控制模型.
-	aclModel = `[request_definition]
+	rbacModel = `[request_definition]
 r = sub, obj, act
 
 [policy_definition]
 p = sub, obj, act
 
+[role_definition]
+g = _, _
+
 [policy_effect]
 e = some(where (p.eft == allow))
 
 [matchers]
-m = r.sub == p.sub && keyMatch(r.obj, p.obj) && regexMatch(r.act, p.act)`
+m = r.sub == p.sub && (keyMatch2(r.obj, p.obj) || keyMatch(r.obj, p.obj)) && (r.act == p.act || p.act == "*")`
 )
 
 // Authz 定义了一个授权器，提供授权功能.
@@ -42,7 +45,8 @@ func NewAuthz(db *gorm.DB) (*Authz, error) {
 		return nil, err
 	}
 
-	m, _ := model.NewModelFromString(aclModel)
+	// 加载rbac权限模型
+	m, _ := model.NewModelFromString(rbacModel)
 
 	// Initialize the enforcer.
 	enforcer, err := casbin.NewSyncedEnforcer(m, adapter)

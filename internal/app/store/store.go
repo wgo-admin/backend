@@ -8,11 +8,17 @@ import (
 	"gorm.io/gorm"
 )
 
+type IStore interface {
+	DB() *gorm.DB
+}
+
 var (
 	once sync.Once
 	// 全局变量，方便其它包直接调用已初始化好的 S 实例.
 	S *datastore
 )
+
+var _ IStore = (*datastore)(nil)
 
 func NewStore(db *gorm.DB, rdb *redis.Client) *datastore {
 	// 确保只执行一次
