@@ -7,10 +7,10 @@ import (
 
 type UserM struct {
 	BaseM
-	Username string `gorm:"column:username;not null;comment:用户名"`
+	Username string `gorm:"column:username;unique;not null;comment:用户名"`
 	Password string `gorm:"column:password;not null;comment:登录密码"`
 	Nickname string `gorm:"column:nickname;comment:昵称"`
-	Email    string `gorm:"column:email;comment:邮箱"`
+	Email    string `gorm:"column:email;unique;not null;comment:邮箱"`
 	Phone    string `gorm:"column:phone;comment:电话号码"`
 	RoleID   string `gorm:"column:role_id"`
 }

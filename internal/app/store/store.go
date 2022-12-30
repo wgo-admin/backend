@@ -13,6 +13,7 @@ type IStore interface {
 	DB() *gorm.DB
 	Casbins() ICasbinStore
 	SysApis() ISysApiStore
+	Users() IUserStore
 }
 
 var (
@@ -35,6 +36,10 @@ type datastore struct {
 	db     *gorm.DB
 	rdb    *redis.Client
 	casbin *auth.Authz
+}
+
+func (ds *datastore) Users() IUserStore {
+	return newUsers(ds.db)
 }
 
 func (ds *datastore) SysApis() ISysApiStore {
