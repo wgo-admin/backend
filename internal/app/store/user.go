@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"errors"
+
 	"github.com/wgo-admin/backend/internal/app/store/model"
 	"gorm.io/gorm"
 )
@@ -71,7 +72,7 @@ func (u *users) List(ctx context.Context, user *model.UserM, offset, limit int) 
 	}
 
 	// 分页查询
-	if err := db.Offset(offset).Limit(limit).Find(&ret).Error; err != nil {
+	if err := db.Offset(offset).Limit(limit).Order("id desc").Find(&ret).Error; err != nil {
 		return 0, nil, err
 	}
 

@@ -1,9 +1,10 @@
 package store
 
 import (
+	"sync"
+
 	"github.com/go-redis/redis/v8"
 	"github.com/wgo-admin/backend/pkg/auth"
-	"sync"
 
 	"github.com/wgo-admin/backend/internal/app/store/model"
 	"gorm.io/gorm"
@@ -14,6 +15,7 @@ type IStore interface {
 	Casbins() ICasbinStore
 	SysApis() ISysApiStore
 	Users() IUserStore
+	Roles() IRoleStore
 }
 
 var (
@@ -36,6 +38,10 @@ type datastore struct {
 	db     *gorm.DB
 	rdb    *redis.Client
 	casbin *auth.Authz
+}
+
+func (ds *datastore) Roles() IRoleStore {
+	return newRoles(ds.db)
 }
 
 func (ds *datastore) Users() IUserStore {

@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+
 	"github.com/wgo-admin/backend/internal/app/store/model"
 	"gorm.io/gorm"
 )
@@ -67,7 +68,7 @@ func (s *sysApis) List(ctx context.Context, sysApi *model.SysApiM, offset, limit
 		return 0, nil, err
 	}
 
-	db = db.Offset(offset).Limit(limit)
+	db = db.Offset(offset).Limit(limit).Order("id desc")
 	err = db.Find(&ret).Error
 	if err != nil {
 		return 0, nil, err
