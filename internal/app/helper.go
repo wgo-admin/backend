@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/wgo-admin/backend/pkg/auth"
 	"os"
 	"path/filepath"
 	"strings"
@@ -105,8 +106,16 @@ func initStore() error {
 
 	log.Infow("connect redis success!")
 
+	// 初始化casbin
+	casbin, err := auth.NewAuthz(mysql)
+	if err != nil {
+		return err
+	}
+
+	log.Infow("cabin load success!")
+
 	// 初始化存储层
-	ds := store.NewStore(mysql, redis)
+	ds := store.NewStore(mysql, redis, casbin)
 
 	// 迁移 gorm 模型到数据库
 	if err := ds.AutoMigrate(); err != nil {

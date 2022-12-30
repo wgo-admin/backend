@@ -83,12 +83,14 @@ func run() error {
 	// 创建 gin 引擎
 	g := gin.New()
 
-	// 注册中间件
+	// 注册公共中间件
 	mws := []gin.HandlerFunc{gin.Recovery()}
 	g.Use(mws...)
 
 	// 注册路由
-	registryRoutes(g)
+	if err := registryRoutes(g); err != nil {
+		return err
+	}
 
 	// 创建并运行 http 服务器
 	httpsrv := startInsecureServer(g)

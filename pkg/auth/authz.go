@@ -1,8 +1,3 @@
-// Copyright 2022 Innkeeper Belm(孔令飞) <nosbelm@qq.com>. All rights reserved.
-// Use of this source code is governed by a MIT style
-// license that can be found in the LICENSE file. The original repo for
-// this file is https://github.com/marmotedu/miniblog.
-
 package auth
 
 import (
@@ -40,7 +35,7 @@ type Authz struct {
 // NewAuthz 创建一个使用 casbin 完成授权的授权器.
 func NewAuthz(db *gorm.DB) (*Authz, error) {
 	// Initialize a Gorm adapter and use it in a Casbin enforcer
-	adapter, err := adapter.NewAdapterByDB(db)
+	adp, err := adapter.NewAdapterByDB(db)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +44,7 @@ func NewAuthz(db *gorm.DB) (*Authz, error) {
 	m, _ := model.NewModelFromString(rbacModel)
 
 	// Initialize the enforcer.
-	enforcer, err := casbin.NewSyncedEnforcer(m, adapter)
+	enforcer, err := casbin.NewSyncedEnforcer(m, adp)
 	if err != nil {
 		return nil, err
 	}
@@ -63,9 +58,4 @@ func NewAuthz(db *gorm.DB) (*Authz, error) {
 	a := &Authz{enforcer}
 
 	return a, nil
-}
-
-// Authorize 用来进行授权.
-func (a *Authz) Authorize(sub, obj, act string) (bool, error) {
-	return a.Enforce(sub, obj, act)
 }
