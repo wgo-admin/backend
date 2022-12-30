@@ -17,7 +17,7 @@ type ICasbinStore interface {
 
 var _ ICasbinStore = (*casbins)(nil)
 
-func NewCasbins(db *gorm.DB, authz *auth.Authz) *casbins {
+func newCasbins(db *gorm.DB, authz *auth.Authz) *casbins {
 	return &casbins{
 		db:     db,
 		casbin: authz,

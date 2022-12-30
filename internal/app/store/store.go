@@ -12,6 +12,7 @@ import (
 type IStore interface {
 	DB() *gorm.DB
 	Casbins() ICasbinStore
+	SysApis() ISysApiStore
 }
 
 var (
@@ -36,9 +37,13 @@ type datastore struct {
 	casbin *auth.Authz
 }
 
+func (ds *datastore) SysApis() ISysApiStore {
+	return newSysApis(ds.db)
+}
+
 // Permissions 返回 IPermissionsStore 接口实例
 func (ds *datastore) Casbins() ICasbinStore {
-	return NewCasbins(ds.db, ds.casbin)
+	return newCasbins(ds.db, ds.casbin)
 }
 
 // 返回一个 gorm db 对象

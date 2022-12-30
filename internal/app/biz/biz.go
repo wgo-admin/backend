@@ -1,25 +1,28 @@
 package biz
 
 import (
+	"github.com/wgo-admin/backend/internal/app/biz/sysApi"
 	"github.com/wgo-admin/backend/internal/app/store"
-	"github.com/wgo-admin/backend/pkg/auth"
 )
 
 // 业务层接口
 type IBiz interface {
+	SysApi() sysApi.ISysApiBiz
 }
 
 var _ IBiz = (*biz)(nil)
 
 // 创建 biz 实例
-func NewBiz(ds store.IStore, authz *auth.Authz) *biz {
+func NewBiz(ds store.IStore) *biz {
 	return &biz{
-		ds:    ds,
-		authz: authz,
+		ds: ds,
 	}
 }
 
 type biz struct {
-	ds    store.IStore
-	authz *auth.Authz
+	ds store.IStore
+}
+
+func (b *biz) SysApi() sysApi.ISysApiBiz {
+	return sysApi.NewBiz(b.ds)
 }
