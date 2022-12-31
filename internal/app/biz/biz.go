@@ -2,12 +2,14 @@ package biz
 
 import (
 	"github.com/wgo-admin/backend/internal/app/biz/sysApi"
+	"github.com/wgo-admin/backend/internal/app/biz/user"
 	"github.com/wgo-admin/backend/internal/app/store"
 )
 
 // 业务层接口
 type IBiz interface {
 	SysApi() sysApi.ISysApiBiz
+	User() user.IUserBiz
 }
 
 var _ IBiz = (*biz)(nil)
@@ -21,6 +23,10 @@ func NewBiz(ds store.IStore) *biz {
 
 type biz struct {
 	ds store.IStore
+}
+
+func (b *biz) User() user.IUserBiz {
+	return user.NewBiz(b.ds)
 }
 
 func (b *biz) SysApi() sysApi.ISysApiBiz {

@@ -7,10 +7,12 @@ require (
 	github.com/casbin/gorm-adapter/v3 v3.13.1
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.8.2
+	github.com/go-playground/validator/v10 v10.11.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/gosuri/uitable v0.0.4
 	github.com/jasonsoft/go-short-id v0.0.0-20180410073244-6ed30cc4305d
+	github.com/jinzhu/copier v0.3.5
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.14.0
@@ -32,7 +34,6 @@ require (
 	github.com/glebarez/sqlite v1.5.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
-	github.com/go-playground/validator/v10 v10.11.1 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/goccy/go-json v0.9.11 // indirect

@@ -1,4 +1,4 @@
-package resp
+package core
 
 import (
 	"net/http"
@@ -15,7 +15,7 @@ type ErrResponse struct {
 
 // 将错误或响应数据写入 HTTP 响应体
 // 使用 errno.Decode 方法，将我们业务层的错误信息进行解析并响应
-func Write(c *gin.Context, err error, data interface{}) {
+func WriteResponse(c *gin.Context, err error, data interface{}) {
 	if err != nil {
 		statusCode, errCode, message := errno.Decode(err)
 		c.JSON(statusCode, ErrResponse{
@@ -26,4 +26,29 @@ func Write(c *gin.Context, err error, data interface{}) {
 	}
 
 	c.JSON(http.StatusOK, data)
+}
+
+type ResponseBody struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Success bool        `json:"success"`
+	Data    interface{} `json:"data,omitempty"`
+}
+
+func ResponseOk(c *gin.Context, msg string, data interface{}) {
+	c.JSON(http.StatusOK, ResponseBody{
+		Code:    0,
+		Message: msg,
+		Success: true,
+		Data:    data,
+	})
+}
+
+func ResponseFail(c *gin.Context, err error) {
+	_, _, message := errno.Decode(err)
+	c.JSON(http.StatusOK, ResponseBody{
+		Code:    -1,
+		Message: message,
+		Success: false,
+	})
 }

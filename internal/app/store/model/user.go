@@ -12,7 +12,7 @@ type UserM struct {
 	Nickname string `gorm:"column:nickname;comment:昵称"`
 	Email    string `gorm:"column:email;unique;not null;comment:邮箱"`
 	Phone    string `gorm:"column:phone;comment:电话号码"`
-	RoleID   string `gorm:"column:role_id"`
+	RoleID   string
 }
 
 // TableName 用来指定映射的 MySQL 表名.

@@ -1,8 +1,6 @@
 package auth
 
 import (
-	"time"
-
 	casbin "github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	adapter "github.com/casbin/gorm-adapter/v3"
@@ -53,7 +51,7 @@ func NewAuthz(db *gorm.DB) (*Authz, error) {
 	if err := enforcer.LoadPolicy(); err != nil {
 		return nil, err
 	}
-	enforcer.StartAutoLoadPolicy(5 * time.Second)
+	//enforcer.StartAutoLoadPolicy(5 * time.Second)
 
 	a := &Authz{enforcer}
 
