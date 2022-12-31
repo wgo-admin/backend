@@ -7,6 +7,7 @@ import (
 	"github.com/wgo-admin/backend/internal/app/store"
 	"github.com/wgo-admin/backend/internal/app/store/model"
 	"github.com/wgo-admin/backend/internal/pkg/errno"
+	"github.com/wgo-admin/backend/internal/pkg/known"
 	"github.com/wgo-admin/backend/internal/pkg/log"
 	v1 "github.com/wgo-admin/backend/pkg/api/app/v1"
 	"github.com/wgo-admin/backend/pkg/auth"
@@ -18,6 +19,7 @@ import (
 type IUserBiz interface {
 	Register(ctx context.Context, req *v1.RegisterUserRequest) error
 	Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error)
+	Logout(ctx context.Context, username string) error
 }
 
 var _ IUserBiz = (*userBiz)(nil)
@@ -28,6 +30,14 @@ func NewBiz(ds store.IStore) *userBiz {
 
 type userBiz struct {
 	ds store.IStore
+}
+
+// Logout 用户退出业务逻辑
+func (b *userBiz) Logout(ctx context.Context, username string) error {
+	if err := b.ds.Cache().Del(ctx, known.GetRedisUserKey(username)); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Register 注册用户的业务逻辑
@@ -89,6 +99,12 @@ func (b *userBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRes
 	t, err := token.Sign(user.Username, user.RoleID)
 	if err != nil {
 		return nil, errno.ErrSignToken
+	}
+
+	// 登录的用户缓存到redis
+	err = b.ds.Cache().SetStruct(ctx, known.GetRedisUserKey(user.Username), user, 0)
+	if err != nil {
+		return nil, err
 	}
 
 	return &v1.LoginResponse{Token: t}, nil

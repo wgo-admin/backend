@@ -24,4 +24,7 @@ var (
 
 	// ErrUnauthorized 表示请求没有被授权.
 	ErrUnauthorized = &Errno{HTTP: 401, Code: "AuthFailure.Unauthorized", Message: "Unauthorized."}
+
+	// ErrSerialization 表示请求没有被授权.
+	ErrSerialization = &Errno{HTTP: 400, Code: "FailedOperation.Serialization", Message: "Serialization error."}
 )

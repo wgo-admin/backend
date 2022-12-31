@@ -23,4 +23,10 @@ var (
 		Code:    "InvalidParameter.PasswordIncorrect",
 		Message: "Password was incorrect.",
 	}
+
+	ErrUserLogout = &Errno{
+		HTTP:    401,
+		Code:    "FailedOperation.UserLogout",
+		Message: "User is logout.",
+	}
 )

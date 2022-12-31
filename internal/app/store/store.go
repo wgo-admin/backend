@@ -17,6 +17,8 @@ type IStore interface {
 	Users() IUserStore
 	Roles() IRoleStore
 	Menus() IMenuStore
+	Redis() *redis.Client
+	Cache() ICacheStore
 }
 
 var (
@@ -39,6 +41,14 @@ type datastore struct {
 	db     *gorm.DB
 	rdb    *redis.Client
 	casbin *auth.Authz
+}
+
+func (ds *datastore) Cache() ICacheStore {
+	return newCache(ds.rdb)
+}
+
+func (ds *datastore) Redis() *redis.Client {
+	return ds.rdb
 }
 
 func (ds *datastore) Menus() IMenuStore {

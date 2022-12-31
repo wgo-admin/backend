@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/wgo-admin/backend/internal/app/biz"
 	v1 "github.com/wgo-admin/backend/internal/app/controller/v1"
+	mw "github.com/wgo-admin/backend/internal/pkg/middleware"
 )
 
 var name = "v1_user"
@@ -29,6 +30,8 @@ func (ctrl *UserController) RegistryApi(g gin.IRouter) {
 	{
 		group.POST("/register", ctrl.register)
 		group.POST("/login", ctrl.login)
+		group.Use(mw.Authn())
+		group.POST("/logout", ctrl.logout)
 	}
 }
 

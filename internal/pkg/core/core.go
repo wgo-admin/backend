@@ -17,15 +17,21 @@ type ErrResponse struct {
 // 使用 errno.Decode 方法，将我们业务层的错误信息进行解析并响应
 func WriteResponse(c *gin.Context, err error, data interface{}) {
 	if err != nil {
-		statusCode, errCode, message := errno.Decode(err)
-		c.JSON(statusCode, ErrResponse{
-			Code:    errCode,
+		statusCode, _, message := errno.Decode(err)
+		c.JSON(statusCode, ResponseBody{
+			Code:    -1,
 			Message: message,
+			Success: false,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, data)
+	c.JSON(http.StatusOK, ResponseBody{
+		Code:    0,
+		Message: "本次请求成功",
+		Success: true,
+		Data:    data,
+	})
 }
 
 type ResponseBody struct {
