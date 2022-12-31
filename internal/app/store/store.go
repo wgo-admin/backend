@@ -16,6 +16,7 @@ type IStore interface {
 	SysApis() ISysApiStore
 	Users() IUserStore
 	Roles() IRoleStore
+	Menus() IMenuStore
 }
 
 var (
@@ -38,6 +39,10 @@ type datastore struct {
 	db     *gorm.DB
 	rdb    *redis.Client
 	casbin *auth.Authz
+}
+
+func (ds *datastore) Menus() IMenuStore {
+	return newMenus(ds.db)
 }
 
 func (ds *datastore) Roles() IRoleStore {
