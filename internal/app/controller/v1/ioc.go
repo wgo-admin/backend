@@ -2,6 +2,7 @@ package v1
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/wgo-admin/backend/internal/app/biz"
 )
@@ -19,7 +20,7 @@ var (
 	ctrls = map[string]IController{}
 )
 
-// RegistryController RegistryGin 每个模块可用该方法去注册api
+// RegistryController 每个模块可用该方法去注册api
 func RegistryController(ctrl IController) {
 	if _, ok := ctrls[ctrl.Name()]; ok {
 		panic(any(fmt.Sprintf("controller %s has registried", ctrl.Name())))
