@@ -4,9 +4,8 @@ import (
 	"sync"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/wgo-admin/backend/internal/pkg/model"
 	"github.com/wgo-admin/backend/pkg/auth"
-
-	"github.com/wgo-admin/backend/internal/app/store/model"
 	"gorm.io/gorm"
 )
 

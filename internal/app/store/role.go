@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/wgo-admin/backend/internal/app/store/model"
+	"github.com/wgo-admin/backend/internal/pkg/model"
 	"gorm.io/gorm"
 )
 

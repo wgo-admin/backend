@@ -18,7 +18,7 @@ type ErrResponse struct {
 func WriteResponse(c *gin.Context, err error, data interface{}) {
 	if err != nil {
 		statusCode, _, message := errno.Decode(err)
-		c.JSON(statusCode, ResponseBody{
+		c.JSON(statusCode, responseBody{
 			Code:    -1,
 			Message: message,
 			Success: false,
@@ -26,7 +26,7 @@ func WriteResponse(c *gin.Context, err error, data interface{}) {
 		return
 	}
 
-	c.JSON(http.StatusOK, ResponseBody{
+	c.JSON(http.StatusOK, responseBody{
 		Code:    0,
 		Message: "本次请求成功",
 		Success: true,
@@ -34,7 +34,7 @@ func WriteResponse(c *gin.Context, err error, data interface{}) {
 	})
 }
 
-type ResponseBody struct {
+type responseBody struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Success bool        `json:"success"`
@@ -42,7 +42,7 @@ type ResponseBody struct {
 }
 
 func ResponseOk(c *gin.Context, msg string, data interface{}) {
-	c.JSON(http.StatusOK, ResponseBody{
+	c.JSON(http.StatusOK, responseBody{
 		Code:    0,
 		Message: msg,
 		Success: true,
@@ -52,7 +52,7 @@ func ResponseOk(c *gin.Context, msg string, data interface{}) {
 
 func ResponseFail(c *gin.Context, err error) {
 	_, _, message := errno.Decode(err)
-	c.JSON(http.StatusOK, ResponseBody{
+	c.JSON(http.StatusOK, responseBody{
 		Code:    -1,
 		Message: message,
 		Success: false,

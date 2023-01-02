@@ -8,10 +8,10 @@ import (
 
 	"github.com/jinzhu/copier"
 	"github.com/wgo-admin/backend/internal/app/store"
-	"github.com/wgo-admin/backend/internal/app/store/model"
 	"github.com/wgo-admin/backend/internal/pkg/errno"
 	"github.com/wgo-admin/backend/internal/pkg/known"
 	"github.com/wgo-admin/backend/internal/pkg/log"
+	"github.com/wgo-admin/backend/internal/pkg/model"
 	v1 "github.com/wgo-admin/backend/pkg/api/app/v1"
 	"github.com/wgo-admin/backend/pkg/auth"
 	"github.com/wgo-admin/backend/pkg/token"
