@@ -40,16 +40,6 @@ type UserListRequest struct {
 	Email    string `form:"email"`
 }
 
-func (r *UserListRequest) Offset() int {
-	r.SetDefaultPage()
-	return (r.PageNumber - 1) * r.PageSize
-}
-
-func (r *UserListRequest) Limit() int {
-	r.SetDefaultPage()
-	return r.PageSize
-}
-
 // 定义 `GET /v1/users` 接口的返回参数
 type UserListResponse struct {
 	Total int64       `json:"total"`

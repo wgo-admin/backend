@@ -3,7 +3,9 @@ package store
 import (
 	"context"
 
+	"github.com/wgo-admin/backend/internal/pkg/log"
 	"github.com/wgo-admin/backend/internal/pkg/model"
+	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
 )
 
@@ -42,9 +44,38 @@ func (s *sysApis) Update(ctx context.Context, sysApi *model.SysApiM) error {
 }
 
 func (s *sysApis) Delete(ctx context.Context, ids []int64) error {
-	if err := s.db.Where("id in (?)", ids).Delete(&model.SysApiM{}).Error; err != nil {
+	var sysApisM []*model.SysApiM
+
+	if err := s.db.Preload("MenusM").Where("id in (?)", ids).Find(&sysApisM).Delete(&sysApisM).Error; err != nil {
 		return err
 	}
+
+	// 使用 goroutine 提升性能
+	eg, ctx := errgroup.WithContext(ctx)
+	for _, item := range sysApisM {
+		sysApiM := item
+		eg.Go(func() error {
+			select {
+			case <-ctx.Done():
+				return nil
+			default:
+				if len(sysApiM.MenusM) > 0 {
+					// 解除与菜单之间的关系
+					if err := s.db.Model(&sysApiM).Association("MenusM").Delete(&sysApiM.MenusM); err != nil {
+						log.C(ctx).Errorw("SysApi unbind menu relation failed", "error", err)
+						return err
+					}
+				}
+				return nil
+			}
+		})
+	}
+
+	if err := eg.Wait(); err != nil {
+		log.C(ctx).Errorw("Failed to wait all function calls returned", "err", err)
+		return err
+	}
+
 	return nil
 }
 

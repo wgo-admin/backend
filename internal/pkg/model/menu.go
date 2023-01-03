@@ -13,7 +13,7 @@ type MenuM struct {
 	Hidden    bool      `gorm:"comment:是否隐藏"`
 	IsLink    bool      `gorm:"comment:是否是链接"`
 	KeepAlive bool      `gorm:"comment:是否缓存"`
-	SysApis   []SysApiM `gorm:"many2many:menu_sys_apis;foreignKey:ID;joinForeignKey:menu_id;references:ID;joinReferences:sys_api_id;"`
+	SysApisM  []SysApiM `gorm:"many2many:menu_sys_apis;foreignKey:ID;joinForeignKey:menu_id;references:ID;joinReferences:sys_api_id;"`
 }
 
 func (a *MenuM) TableName() string {

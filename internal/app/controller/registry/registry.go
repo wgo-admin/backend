@@ -5,5 +5,6 @@
 package registry
 
 import (
+	_ "github.com/wgo-admin/backend/internal/app/controller/v1/sysApi"
 	_ "github.com/wgo-admin/backend/internal/app/controller/v1/user"
 )
