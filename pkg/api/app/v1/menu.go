@@ -24,7 +24,7 @@ type MenuInfo struct {
 	Title     string      `json:"title"`
 	Sort      int         `json:"sort"`
 	Type      string      `json:"type"`
-	Icon      string      `json:"icon"`
+	Icon      string      `json:"icon,"`
 	Component string      `json:"component"`
 	Path      string      `json:"path"`
 	Perm      string      `json:"perm"`
@@ -33,7 +33,7 @@ type MenuInfo struct {
 	KeepAlive bool        `json:"keepAlive"`
 	ApiIds    []int64     `json:"apiIds"`
 	Children  []*MenuInfo `json:"chidlren,omitempty"`
-	IsLeaf    bool        `json:"isLeaf"`
+	IsLeaf    bool        `json:"isLeaf,omitempty"`
 }
 
 // 定义菜单树 `GET /v1/menus/tree` 响应参数

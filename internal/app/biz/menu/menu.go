@@ -14,6 +14,7 @@ import (
 type IMenuBiz interface {
 	Create(ctx context.Context, req *v1.CreateOrUpdateMenuRequest) error
 	GetListByParentID(ctx context.Context, parentId int64) (*v1.QueryMenuTreeResponse, error)
+	Get(ctx context.Context, id int64) (*v1.MenuInfo, error)
 }
 
 var _ IMenuBiz = (*menuBiz)(nil)
@@ -26,6 +27,32 @@ type menuBiz struct {
 	ds store.IStore
 }
 
+// 获取详细信息
+func (b *menuBiz) Get(ctx context.Context, id int64) (*v1.MenuInfo, error) {
+  menuM, err := b.ds.Menus().Get(ctx, id)
+  if err != nil {
+    return nil, err
+  }
+
+  sysApiLen := len(menuM.SysApisM)
+  sysApiIds := make([]int64, 0, sysApiLen)
+  if sysApiLen > 0 {
+    for _, item := range menuM.SysApisM {
+      sysApi := item
+      sysApiIds = append(sysApiIds, sysApi.ID)
+    }
+  }
+
+  var menuInfo v1.MenuInfo
+  copier.Copy(&menuInfo, menuM)
+  menuInfo.CreatedAt = menuM.CreatedAt.Format(v1.TIME_FORMAT)
+  menuInfo.UpdatedAt = menuM.UpdatedAt.Format(v1.TIME_FORMAT)
+  menuInfo.ApiIds = sysApiIds
+
+  return &menuInfo, nil
+}
+
+// 根据 parent_id 查询菜单列表
 func (b *menuBiz) GetListByParentID(ctx context.Context, parentId int64) (*v1.QueryMenuTreeResponse, error) {
 	var menusM []*model.MenuM
 	if err := b.ds.DB().Preload("SysApisM").Where("parent_id = ?", parentId).Find(&menusM).Error; err != nil {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/wgo-admin/backend/internal/pkg/log"
 	"github.com/wgo-admin/backend/internal/pkg/model"
 	"gorm.io/gorm"
 )
@@ -12,7 +13,7 @@ type IMenuStore interface {
 	Create(ctx context.Context, menu *model.MenuM) error
 	Get(ctx context.Context, id int64) (*model.MenuM, error)
 	Update(ctx context.Context, menu *model.MenuM) error
-	Delete(ctx context.Context, ids []int64) error
+	Delete(ctx context.Context, ids int64) error
 	All(ctx context.Context) (ret []*model.MenuM, err error)
 }
 
@@ -34,7 +35,7 @@ func (m *menus) Create(ctx context.Context, menu *model.MenuM) error {
 // 获取菜单详情
 func (m *menus) Get(ctx context.Context, id int64) (*model.MenuM, error) {
 	var menu model.MenuM
-	if err := m.db.First(&menu, id).Error; err != nil {
+	if err := m.db.Preload("SysApisM").First(&menu, id).Error; err != nil {
 		return nil, err
 	}
 	return &menu, nil
@@ -46,12 +47,20 @@ func (m *menus) Update(ctx context.Context, menu *model.MenuM) error {
 }
 
 // 删除菜单
-func (m *menus) Delete(ctx context.Context, ids []int64) error {
-	err := m.db.Where("id in (?)", ids).Delete(&model.MenuM{}).Error
+func (m *menus) Delete(ctx context.Context, ids int64) error {
+  var menuM model.MenuM
+	err := m.db.Preload("SysApisM").Where("id = ?", ids).Find(&menuM).Delete(&model.MenuM{}).Error
 	// 如果有错误且错误不是 ErrRecordNotFound，则返回err
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
+
+  // 解除与接口的关系
+  if err := m.db.Model(&menuM).Association("SysApisM").Delete(&menuM.SysApisM); err != nil {
+    log.C(ctx).Errorw("MenuM unbind SysApi relation failed", "error", err)
+    return err
+  }
+
 	return nil
 }
 
