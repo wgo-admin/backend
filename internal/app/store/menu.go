@@ -9,7 +9,7 @@ import (
 )
 
 type IMenuStore interface {
-	Create(ctx context.Context, role *model.MenuM) error
+	Create(ctx context.Context, menu *model.MenuM) error
 	Get(ctx context.Context, id int64) (*model.MenuM, error)
 	Update(ctx context.Context, menu *model.MenuM) error
 	Delete(ctx context.Context, ids []int64) error
@@ -27,8 +27,8 @@ type menus struct {
 }
 
 // 创建菜单
-func (m *menus) Create(ctx context.Context, role *model.MenuM) error {
-	return m.db.Create(&role).Error
+func (m *menus) Create(ctx context.Context, menu *model.MenuM) error {
+	return m.db.Create(&menu).Error
 }
 
 // 获取菜单详情

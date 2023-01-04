@@ -5,7 +5,7 @@ type MenuM struct {
 	Title     string    `gorm:"size:128;comment:标题"`
 	Sort      int       `gorm:"size:4;comment:排序"`
 	Type      string    `gorm:"size:1;comment:菜单类型, C:代表目录 M:代表菜单 B:代表按钮"`
-	ParentID  int64     `gorm:"comment:父级ID"`
+	ParentID  int64     `gorm:"comment:父级ID;default:0"`
 	Icon      string    `gorm:"size:128;comment:图标"`
 	Component string    `gorm:"size:255;comment:组件路径"`
 	Path      string    `gorm:"size:128;comment:路由路径"`
