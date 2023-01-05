@@ -57,6 +57,9 @@ func (b *sysApiBiz) Update(ctx context.Context, id int64, req *v1.UpdateSysApiRe
 		return err
 	}
 
+  oldPath := sysApiM.Path
+  oldMethod := sysApiM.Method
+
 	// 需要查询有没有相同的method和path，有则不能去更新
 	err = b.ds.DB().Where("method = ? AND path = ?", req.Method, req.Path).First(&sysApiM).Error
 	// 如果错误不是 ErrRecordNotFound，则需要返回错误, 找不到才可以去更新
@@ -84,6 +87,12 @@ func (b *sysApiBiz) Update(ctx context.Context, id int64, req *v1.UpdateSysApiRe
 	if err != nil {
 		return err
 	}
+
+  // 更新完api还需更新casbin的策略规则
+  if err := b.ds.Casbins().UpdateRule(ctx, oldPath, oldMethod, *req.Path, *req.Method); err != nil {
+    log.C(ctx).Errorw("casbin UpdateRule failed", "error", err)
+    return err
+  }
 
 	return nil
 }

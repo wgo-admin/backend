@@ -32,7 +32,9 @@ func (ctrl *MenuController) RegistryApi(g gin.IRouter) {
 	{
 		group.POST("", ctrl.create)
 		group.GET("/tree/:parentId", ctrl.tree)
-    group.GET(":id", ctrl.get)
+		group.GET(":id", ctrl.get)
+		group.PUT(":id", ctrl.update)
+		group.DELETE(":id", ctrl.delete)
 	}
 }
 

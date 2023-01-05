@@ -15,6 +15,8 @@ type IMenuBiz interface {
 	Create(ctx context.Context, req *v1.CreateOrUpdateMenuRequest) error
 	GetListByParentID(ctx context.Context, parentId int64) (*v1.QueryMenuTreeResponse, error)
 	Get(ctx context.Context, id int64) (*v1.MenuInfo, error)
+	Delete(ctx context.Context, id int64) error
+	Update(ctx context.Context, id int64, req *v1.CreateOrUpdateMenuRequest) error
 }
 
 var _ IMenuBiz = (*menuBiz)(nil)
@@ -27,29 +29,61 @@ type menuBiz struct {
 	ds store.IStore
 }
 
-// 获取详细信息
-func (b *menuBiz) Get(ctx context.Context, id int64) (*v1.MenuInfo, error) {
+// 更新
+func (b *menuBiz) Update(ctx context.Context, id int64, req *v1.CreateOrUpdateMenuRequest) error {
   menuM, err := b.ds.Menus().Get(ctx, id)
   if err != nil {
-    return nil, err
+    return err
+  }
+  copier.Copy(&menuM, req)
+
+  // 查找要绑定的api
+  var sysApisM []model.SysApiM
+  if err := b.ds.DB().Where("id in (?)", req.ApiIds).Find(&sysApisM).Error; err != nil {
+    return err
+  }
+  // 替换绑定关系
+  menuM.SysApisM = sysApisM
+
+  if err := b.ds.Menus().Update(ctx, menuM); err != nil {
+    return err
   }
 
-  sysApiLen := len(menuM.SysApisM)
-  sysApiIds := make([]int64, 0, sysApiLen)
-  if sysApiLen > 0 {
-    for _, item := range menuM.SysApisM {
-      sysApi := item
-      sysApiIds = append(sysApiIds, sysApi.ID)
-    }
-  }
+  return nil
+}
 
-  var menuInfo v1.MenuInfo
-  copier.Copy(&menuInfo, menuM)
-  menuInfo.CreatedAt = menuM.CreatedAt.Format(v1.TIME_FORMAT)
-  menuInfo.UpdatedAt = menuM.UpdatedAt.Format(v1.TIME_FORMAT)
-  menuInfo.ApiIds = sysApiIds
+// 删除菜单
+func (b *menuBiz) Delete(ctx context.Context, id int64) error {
+	if err := b.ds.Menus().Delete(ctx, id); err != nil {
+		return err
+	}
 
-  return &menuInfo, nil
+	return nil
+}
+
+// 获取详细信息
+func (b *menuBiz) Get(ctx context.Context, id int64) (*v1.MenuInfo, error) {
+	menuM, err := b.ds.Menus().Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	sysApiLen := len(menuM.SysApisM)
+	sysApiIds := make([]int64, 0, sysApiLen)
+	if sysApiLen > 0 {
+		for _, item := range menuM.SysApisM {
+			sysApi := item
+			sysApiIds = append(sysApiIds, sysApi.ID)
+		}
+	}
+
+	var menuInfo v1.MenuInfo
+	copier.Copy(&menuInfo, menuM)
+	menuInfo.CreatedAt = menuM.CreatedAt.Format(v1.TIME_FORMAT)
+	menuInfo.UpdatedAt = menuM.UpdatedAt.Format(v1.TIME_FORMAT)
+	menuInfo.ApiIds = sysApiIds
+
+	return &menuInfo, nil
 }
 
 // 根据 parent_id 查询菜单列表
