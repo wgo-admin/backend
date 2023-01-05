@@ -28,6 +28,7 @@ type IUserBiz interface {
 	Delete(ctx context.Context, username string) error
 	Update(ctx context.Context, username string, req *v1.UpdateUserRequest) error
 	ChangePassword(ctx context.Context, username string, req *v1.ChangePasswordRequest) error
+	Profile(ctx context.Context, username string) (*v1.UserInfo, error)
 }
 
 var _ IUserBiz = (*userBiz)(nil)
@@ -38,6 +39,37 @@ func NewBiz(ds store.IStore) *userBiz {
 
 type userBiz struct {
 	ds store.IStore
+}
+
+// 获取登录用户的详情
+func (b *userBiz) Profile(ctx context.Context, username string) (*v1.UserInfo, error) {
+	// 查询用户详情
+	userM, err := b.ds.Users().Get(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+	// 查询用户的角色信息
+	roleM, err := b.ds.Roles().Get(ctx, userM.RoleID)
+	if err != nil {
+		return nil, err
+	}
+
+	// 获取权限按钮
+	var buttons []string
+	for _, item := range roleM.MenusM {
+		if item.Perm != "" {
+			buttons = append(buttons, item.Perm)
+		}
+	}
+
+	var userInfo v1.UserInfo
+	_ = copier.Copy(&userInfo, userM)
+	userInfo.RoleName = roleM.Name
+	userInfo.Buttons = buttons
+	userInfo.CreatedAt = userM.CreatedAt.Format(v1.TIME_FORMAT)
+	userInfo.UpdatedAt = userM.UpdatedAt.Format(v1.TIME_FORMAT)
+
+	return &userInfo, nil
 }
 
 // ChangePassword implements IUserBiz

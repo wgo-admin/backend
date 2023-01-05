@@ -1,5 +1,7 @@
 package errno
 
+import "net/http"
+
 var (
 	// OK 代表请求成功.
 	OK = &Errno{HTTP: 200, Code: "", Message: ""}
@@ -27,4 +29,10 @@ var (
 
 	// ErrSerialization 表示请求没有被授权.
 	ErrSerialization = &Errno{HTTP: 400, Code: "FailedOperation.Serialization", Message: "Serialization error."}
+
+	ErrForbidden = &Errno{
+		HTTP:    http.StatusForbidden,
+		Code:    "AuthFailure.Forbidden",
+		Message: "Forbidden.",
+	}
 )

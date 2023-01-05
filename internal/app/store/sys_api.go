@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"github.com/wgo-admin/backend/pkg/auth"
 
 	"github.com/wgo-admin/backend/internal/pkg/log"
 	"github.com/wgo-admin/backend/internal/pkg/model"
@@ -18,13 +19,14 @@ type ISysApiStore interface {
 }
 
 type sysApis struct {
-	db *gorm.DB
+	db     *gorm.DB
+	casbin *auth.Authz
 }
 
 var _ ISysApiStore = (*sysApis)(nil)
 
-func newSysApis(db *gorm.DB) *sysApis {
-	return &sysApis{db: db}
+func newSysApis(db *gorm.DB, casbin *auth.Authz) *sysApis {
+	return &sysApis{db: db, casbin: casbin}
 }
 
 func (s *sysApis) Create(ctx context.Context, sysApi *model.SysApiM) error {
@@ -66,6 +68,13 @@ func (s *sysApis) Delete(ctx context.Context, ids []int64) error {
 						return err
 					}
 				}
+
+				// 同时删除 casbin_rule 表的策略规则
+				_, err := s.casbin.RemoveFilteredPolicy(1, sysApiM.Path, sysApiM.Method)
+				if err != nil {
+					return err
+				}
+
 				return nil
 			}
 		})

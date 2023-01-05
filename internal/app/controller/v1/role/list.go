@@ -1,8 +1,6 @@
-package menu
+package role
 
 import (
-	"strconv"
-
 	"github.com/gin-gonic/gin"
 	"github.com/wgo-admin/backend/internal/pkg/core"
 	"github.com/wgo-admin/backend/internal/pkg/errno"
@@ -11,25 +9,26 @@ import (
 	"github.com/wgo-admin/backend/pkg/validate"
 )
 
-func (ctrl *MenuController) update(c *gin.Context) {
-	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+// 查询 role 列表
+func (ctrl *RoleController) list(c *gin.Context) {
+	log.C(c.Request.Context()).Infow("List role function called")
 
-	var req v1.CreateOrUpdateMenuRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	var req v1.QueryRoleRequest
+	if err := c.ShouldBindQuery(&req); err != nil {
 		core.ResponseFail(c, errno.ErrBind)
 		return
 	}
 
 	if err := validate.ValidateStruct(req); err != nil {
-		log.C(c.Request.Context()).Errorw("ErrInvalidParameter", "error", err)
 		core.ResponseFail(c, errno.ErrInvalidParameter)
 		return
 	}
 
-	if err := ctrl.biz.Menu().Update(c.Request.Context(), id, &req); err != nil {
+	resp, err := ctrl.biz.Role().List(c.Request.Context(), &req)
+	if err != nil {
 		core.ResponseFail(c, err)
 		return
 	}
 
-	core.ResponseOk(c, "更新成功", nil)
+	core.ResponseOk(c, "查询成功", resp)
 }

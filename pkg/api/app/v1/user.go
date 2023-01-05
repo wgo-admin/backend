@@ -23,14 +23,15 @@ type LoginResponse struct {
 
 // 定义用户的详细信息
 type UserInfo struct {
-	Username  string `json:"username"`
-	Nickname  string `json:"nickname"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	RoleID    string `json:"roleId"`
-	RoleName  string `json:"roleName"`
-	CreatedAt string `json:"createdAt"`
-	UpdatedAt string `json:"updatedAt"`
+	Username  string   `json:"username"`
+	Nickname  string   `json:"nickname"`
+	Email     string   `json:"email"`
+	Phone     string   `json:"phone"`
+	RoleID    string   `json:"roleId"`
+	RoleName  string   `json:"roleName"`
+	Buttons   []string `json:"buttons,omitempty"` // 按钮权限
+	CreatedAt string   `json:"createdAt"`
+	UpdatedAt string   `json:"updatedAt"`
 }
 
 // 定义 `GET /v1/users` 接口的请求参数

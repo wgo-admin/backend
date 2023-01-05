@@ -9,11 +9,11 @@ import (
 )
 
 func (ctrl *MenuController) tree(c *gin.Context) {
-	log.C(c).Infow("Menu tree function called")
+	log.C(c.Request.Context()).Infow("Menu tree function called")
 
 	parentId, _ := strconv.ParseInt(c.Param("parentId"), 10, 64)
 
-	resp, err := ctrl.biz.Menu().GetListByParentID(c, parentId)
+	resp, err := ctrl.biz.Menu().GetListByParentID(c.Request.Context(), parentId)
 	if err != nil {
 		core.ResponseFail(c, err)
 		return

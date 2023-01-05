@@ -28,15 +28,18 @@ func (ctrl *UserController) Name() string {
 func (ctrl *UserController) RegistryApi(g gin.IRouter) {
 	group := g.Group("/users")
 	{
-		group.POST("/register", ctrl.register)
 		group.POST("/login", ctrl.login)
 		group.PATCH(":username/change_password", ctrl.changePassword)
 		group.Use(mw.Authn())
 		group.POST("/logout", ctrl.logout)
+		group.Use(mw.Authz())
+		group.POST("/register", ctrl.register)
 		group.GET("", ctrl.list)
 		group.GET(":username", ctrl.get)
 		group.PUT(":username", ctrl.update)
 		group.DELETE(":username", ctrl.delete)
+		group.GET("/profile", ctrl.profile)
+		group.GET("/menus", ctrl.menus)
 	}
 }
 

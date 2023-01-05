@@ -28,7 +28,7 @@ func (ctrl *MenuController) Name() string {
 }
 
 func (ctrl *MenuController) RegistryApi(g gin.IRouter) {
-	group := g.Group("/menus", mw.Authn())
+	group := g.Group("/menus", mw.Authn(), mw.Authz())
 	{
 		group.POST("", ctrl.create)
 		group.GET("/tree/:parentId", ctrl.tree)

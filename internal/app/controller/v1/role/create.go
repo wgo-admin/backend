@@ -1,8 +1,6 @@
-package menu
+package role
 
 import (
-	"strconv"
-
 	"github.com/gin-gonic/gin"
 	"github.com/wgo-admin/backend/internal/pkg/core"
 	"github.com/wgo-admin/backend/internal/pkg/errno"
@@ -11,25 +9,25 @@ import (
 	"github.com/wgo-admin/backend/pkg/validate"
 )
 
-func (ctrl *MenuController) update(c *gin.Context) {
-	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+// 创建 sysApi
+func (ctrl *RoleController) create(c *gin.Context) {
+	log.C(c.Request.Context()).Infow("Role create function called")
 
-	var req v1.CreateOrUpdateMenuRequest
+	var req v1.CreateRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.ResponseFail(c, errno.ErrBind)
 		return
 	}
 
 	if err := validate.ValidateStruct(req); err != nil {
-		log.C(c.Request.Context()).Errorw("ErrInvalidParameter", "error", err)
 		core.ResponseFail(c, errno.ErrInvalidParameter)
 		return
 	}
 
-	if err := ctrl.biz.Menu().Update(c.Request.Context(), id, &req); err != nil {
+	if err := ctrl.biz.Role().Create(c.Request.Context(), &req); err != nil {
 		core.ResponseFail(c, err)
 		return
 	}
 
-	core.ResponseOk(c, "更新成功", nil)
+	core.ResponseOk(c, "创建成功", nil)
 }

@@ -38,11 +38,15 @@ func (s *casbins) Clear(ctx context.Context, fieldIndex int, p ...string) bool {
 // 给角色创建或更新权限
 func (s *casbins) CreateOrUpdate(ctx context.Context, roleId string, infos []map[string]string) error {
 	s.Clear(ctx, 0, roleId)
-	var rules [][]string
-	for _, v := range infos {
-		rules = append(rules, []string{roleId, v["Path"], v["Method"]})
+	rules := [][]string{}
+	{
 	}
-	success, _ := s.casbin.AddPolicy(rules)
+	for _, v := range infos {
+		path := v["Path"]
+		method := v["Method"]
+		rules = append(rules, []string{roleId, path, method})
+	}
+	success, _ := s.casbin.AddPolicies(rules)
 	if !success {
 		return errno.ErrHasSameApi
 	}

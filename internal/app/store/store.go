@@ -63,7 +63,7 @@ func (ds *datastore) Users() IUserStore {
 }
 
 func (ds *datastore) SysApis() ISysApiStore {
-	return newSysApis(ds.db)
+	return newSysApis(ds.db, ds.casbin)
 }
 
 // Permissions 返回 IPermissionsStore 接口实例

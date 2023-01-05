@@ -28,7 +28,7 @@ func (ctrl *SysApiController) Name() string {
 }
 
 func (ctrl *SysApiController) RegistryApi(g gin.IRouter) {
-	group := g.Group("/sys_apis", mw.Authn())
+	group := g.Group("/sys_apis", mw.Authn(), mw.Authz())
 	{
 		group.POST("", ctrl.create)
 		group.GET("", ctrl.list)
